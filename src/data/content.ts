@@ -371,9 +371,8 @@ export const about = {
 
 export const contact = {
   title: "想合作，或只是打个招呼。",
-  note: "邮箱和社交账号都是占位示例，上线前请换成你自己的。",
   links: [
-    { label: "Email", value: "hello@tanaka.example", href: "mailto:hello@tanaka.example" },
+    { label: "Email", value: "2597743668@qq.com", href: "mailto:2597743668@qq.com" },
     { label: "Instagram", value: "@tanaka.example", href: "https://instagram.com/" },
     { label: "小红书", value: "田中（示例）", href: "https://www.xiaohongshu.com/" },
     { label: "LinkedIn", value: "Tanaka", href: "https://www.linkedin.com/" },
