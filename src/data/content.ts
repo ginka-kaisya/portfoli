@@ -20,7 +20,7 @@
  * - ratio         可选。CSS 宽高比，例如 "1080 / 1920"，避免裁掉画面里的字
  * - span          可选。作品墙跨列，不写就按默认节奏
  *
- * 首页「最近の作品」用下面的 reel。三支成片同时写进 works，作品墙里也能筛到。
+ * 首页「最近の作品」用下面的 reel。成片同时写进 works，作品墙里也能筛到。
  *
  * 本地影片：把 mp4 放进 public/media/，src 写成 "media/你的文件.mp4"
  * YouTube：src 贴观看链接即可，例如 https://www.youtube.com/watch?v=xxxxxxxx
@@ -88,7 +88,7 @@ export const site = {
   issue: "2026 秋冬",
   locationNote: "京都 · 示例封面",
   description:
-    "田中的作品集。InnAIO Japan 海外达人合作。三支声音克隆翻译器短片，图片与数字仍为示例。",
+    "田中的作品集。InnAIO Japan 海外达人合作。两支声音克隆翻译器短片，图片与数字仍为示例。",
   updated: "2026-11-26",
 };
 
@@ -137,7 +137,7 @@ export const markets = {
 
 export const reel = {
   title: "最近の作品",
-  lede: "生活、会议，与节日。三支 InnAIO 声音克隆翻译器短片。",
+  lede: "生活与会议。两支 InnAIO 声音克隆翻译器短片。",
   films: [
     {
       id: "pizza-chicken",
@@ -160,17 +160,6 @@ export const reel = {
       src: "media/global-meeting.mp4",
       poster: "media/global-meeting.jpg",
       ratio: "832 / 1056",
-    },
-    {
-      id: "holiday-gift",
-      issue: "03",
-      titleJa: "最高のホリデーギフト",
-      titleZh: "完美的节日礼物",
-      category: "节日 / 产品展示",
-      duration: "0:10",
-      src: "media/holiday-gift.mp4",
-      poster: "media/holiday-gift.jpg",
-      ratio: "720 / 1280",
     },
   ] satisfies ReelFilm[],
 };
@@ -211,22 +200,6 @@ export const works: WorkItem[] = [
     example: false,
   },
   {
-    id: "holiday-gift",
-    title: "完美的节日礼物",
-    titleJa: "最高のホリデーギフト",
-    category: "节日 / 产品展示",
-    type: "video",
-    src: "media/holiday-gift.mp4",
-    thumbnail: "media/holiday-gift.jpg",
-    description: "深绿、朱红和金。翻译器被放在礼物的位置，画面自己慢慢动，没有字幕。",
-    date: "2026-11-26",
-    frame: "portrait",
-    ratio: "720 / 1280",
-    duration: "0:10",
-    span: 4,
-    example: false,
-  },
-  {
     id: "morning-path",
     title: "清晨的参道",
     category: "春季新品",
@@ -243,34 +216,6 @@ export const works: WorkItem[] = [
       likes: "4.2万",
       engagementRate: "6.8%",
     },
-  },
-  {
-    id: "bottle-light",
-    title: "瓶身与侧光",
-    category: "春季新品",
-    type: "image",
-    src: photo("1541643600914-78b084683601", 1800),
-    thumbnail: photo("1541643600914-78b084683601", 1000),
-    description: "示例静物。留给评论区的那张图：只留瓶身、光和一只手，方便达人统一封面。",
-    date: "2026-04-22",
-    frame: "portrait",
-    metrics: {
-      platform: "小红书",
-      views: "64万",
-      likes: "3.1万",
-      engagementRate: "7.4%",
-    },
-  },
-  {
-    id: "shimokita-afternoon",
-    title: "下北泽的下午",
-    category: "城市纪实",
-    type: "image",
-    src: photo("1495474472287-4d71bcdd2085", 2000),
-    thumbnail: photo("1495474472287-4d71bcdd2085", 1200),
-    description: "示例街拍。没有单条数据的作品也可以，不填 metrics 就不会出现数字。",
-    date: "2026-05-16",
-    frame: "landscape",
   },
   {
     id: "before-swatch",
@@ -307,17 +252,6 @@ export const works: WorkItem[] = [
     },
   },
   {
-    id: "first-layer",
-    title: "礼盒的第一层",
-    category: "春季新品",
-    type: "image",
-    src: photo("1512496015851-a90fb38ba796", 1600),
-    thumbnail: photo("1512496015851-a90fb38ba796", 1000),
-    description: "示例细节。开箱视频的封面帧，单独拿出来做图文笔记。",
-    date: "2026-09-19",
-    frame: "landscape",
-  },
-  {
     id: "sea-cloth",
     title: "布料与海风",
     category: "品牌形象",
@@ -334,23 +268,6 @@ export const works: WorkItem[] = [
       engagementRate: "8.2%",
     },
   },
-  {
-    id: "after-live",
-    title: "直播结束后",
-    category: "直播回顾",
-    type: "image",
-    src: photo("1441986300917-64674bd600d8", 2000),
-    thumbnail: photo("1441986300917-64674bd600d8", 1200),
-    description: "示例幕后。灯还亮着，货已经清点完。结案报告里用它当最后一页。",
-    date: "2026-11-02",
-    frame: "landscape",
-    metrics: {
-      platform: "Bilibili",
-      views: "33万",
-      likes: "8600",
-      engagementRate: "3.2%",
-    },
-  },
 ];
 
 export const about = {
@@ -359,7 +276,7 @@ export const about = {
   imageAlt: "示例配图：安静的室内，不是田中的肖像",
   paragraphs: [
     "田中在 InnAIO Japan 做海外达人合作。工作从日本出发，把产品交到不同市场的创作者手里：选人、对脚本、看播出、复盘下一次该换谁。",
-    "这个页面用杂志的方式放作品和成绩。上面三支短片是 InnAIO 声音克隆翻译器的战役成片。其余图片和数字仍是示例。换成更多真实案例时，改 src/data/content.ts。",
+    "这个页面用杂志的方式放作品和成绩。上面两支短片是 InnAIO 声音克隆翻译器的战役成片。其余图片和数字仍是示例。换成更多真实案例时，改 src/data/content.ts。",
   ],
   facts: [
     { label: "机构", value: "InnAIO Japan" },
