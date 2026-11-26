@@ -432,7 +432,6 @@ function pageHtml(): string {
       <div class="wrap">
         <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Contact</span></div>
         <h2>${esc(contact.title)}</h2>
-        <p class="lede">${esc(contact.note)}</p>
         <div class="contact-list">${links}</div>
       </div>
     </section>
