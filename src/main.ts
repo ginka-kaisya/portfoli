@@ -231,7 +231,7 @@ function reelHtml(): string {
 }
 
 function aiNoteHtml(): string {
-  return `<p class="ai-note"><span>作品均由 AI 生成或辅助创作</span><span lang="ja">作品はすべてAIによる生成、またはAIを活用して制作しています。</span></p>`;
+  return `<p class="ai-note">作品均由 AI 生成或辅助创作</p>`;
 }
 
 function seriesHtml(): string {

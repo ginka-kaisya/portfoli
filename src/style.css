@@ -617,12 +617,6 @@ h2 {
   line-height: 1.75;
 }
 
-.ai-note span { display: block; }
-
-.ai-note span + span {
-  margin-top: 0.12rem;
-  font-family: "Noto Serif JP", "Yu Mincho", "Noto Serif SC", serif;
-}
 
 .filters {
   display: flex;
