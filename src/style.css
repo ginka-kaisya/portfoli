@@ -898,18 +898,21 @@ h2 {
 .reel-scroll {
   width: min(1120px, calc(100% - var(--gutter) * 2));
   margin-inline: auto;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .reel-row {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: clamp(1.35rem, 3vw, 2.8rem);
+  gap: clamp(1rem, 2.2vw, 2.6rem);
 }
 
 .reel-item {
   display: flex;
   flex-direction: column;
+  flex: 0 0 auto;
   width: min-content;
   max-width: 100%;
   opacity: 0;
@@ -918,7 +921,7 @@ h2 {
 
 .reel-stage {
   position: relative;
-  height: clamp(340px, 42vw, 480px);
+  height: var(--reel-h, clamp(340px, 42vw, 480px));
   aspect-ratio: var(--ar);
   background: #ebe4da;
   overflow: hidden;
@@ -1465,9 +1468,18 @@ dialog.lightbox[open]::backdrop { animation: lb-bg 0.4s ease; }
     gap: 1rem;
   }
 
-  .reel-item { scroll-snap-align: center; }
+  .reel-item {
+    flex: 0 0 auto;
+    width: min-content;
+    max-width: none;
+    scroll-snap-align: center;
+  }
 
-  .reel-stage { height: min(64vh, 520px); }
+  .reel-stage {
+    width: auto;
+    height: min(64vh, 520px);
+    max-height: none;
+  }
 
   .vcol { grid-template-rows: auto 120px auto; }
   .vtrack { height: 120px; }
