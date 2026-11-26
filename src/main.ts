@@ -351,7 +351,7 @@ function collabsHtml(): string {
   return `<section class="section collabs reveal" id="collabs" aria-label="合作短视频">
     <div class="wrap">
       <div class="sec-head">
-        <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Collaborations</span></div>
+        <div class="sec-label"><span class="sec-no">05</span><span class="sec-en" lang="en">Collaborations</span></div>
         <h2>${esc(collabs.title)}</h2>
         <p class="collab-sub" lang="ja">${esc(collabs.titleJa)}</p>
         ${note}
@@ -431,8 +431,8 @@ function pageHtml(): string {
       <a href="#featured">近作</a>
       <a href="#figures">数据</a>
       <a href="#works">作品</a>
-      <a href="#about">关于</a>
       ${collabs.items.length ? `<a href="#collabs">合作</a>` : ""}
+      <a href="#about">关于</a>
       <a href="#contact">联络</a>
     </nav>
     <p class="issue-label">${esc(site.issue)}</p>
@@ -490,10 +490,12 @@ function pageHtml(): string {
       </div>
     </section>
 
+    ${collabsHtml()}
+
     <section class="section about reveal" id="about">
       <div class="wrap about-grid">
         <div>
-          <div class="sec-label"><span class="sec-no">05</span><span class="sec-en" lang="en">Profile</span></div>
+          <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Profile</span></div>
           <blockquote>${esc(about.quote)}</blockquote>
           <figure class="about-figure">
             <img src="${esc(about.image)}" alt="${esc(about.imageAlt)}" data-seed="about" loading="lazy" decoding="async">
@@ -507,8 +509,6 @@ function pageHtml(): string {
         </div>
       </div>
     </section>
-
-    ${collabsHtml()}
 
     <section class="section contact reveal" id="contact">
       <div class="wrap">
