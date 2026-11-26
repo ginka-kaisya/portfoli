@@ -201,6 +201,7 @@ function reelHtml(): string {
     .map(
       (film, index) => `<article class="reel-item" style="--i:${index}">
         <div class="reel-stage" style="--ar: ${esc(film.ratio)}">
+          <img class="reel-poster" alt="" src="${esc(withBase(film.poster))}">
           <video muted loop playsinline preload="none" poster="${esc(withBase(film.poster))}" src="${esc(withBase(film.src))}"></video>
           <button type="button" class="reel-hit" data-open="${esc(film.id)}" aria-label="有声播放「${esc(film.titleZh)}」">${iconPlayMark()}</button>
         </div>
