@@ -2,7 +2,7 @@
 
 InnAIO Japan 海外达人合作的个人作品集。日系清新杂志风，静态页面，适合免费放在 GitHub Pages 上，任何人随时都能打开。
 
-首页「最近の作品」里的两支短片是 InnAIO 战役成片。其余图片和数字仍是**示例**。换成更多真实内容时，主要改 `src/data/content.ts`。
+首页「最近の作品」里的短片是 InnAIO 战役成片，支数跟着 `reel.films` 走。其余图片和数字仍是**示例**。换成更多真实内容时，主要改 `src/data/content.ts`。
 
 ## 本地预览
 
@@ -115,7 +115,7 @@ npm run preview
 
 - 字体：Google Fonts 上的 Noto Serif SC / Noto Serif JP / Noto Sans SC / Noto Sans JP / Cormorant Garamond，采用 SIL Open Font License。
 - 示例图片：Unsplash，按 [Unsplash License](https://unsplash.com/license) 使用，只作占位。
-- `public/media/` 里的两支 mp4 是 InnAIO 声音克隆翻译器战役成片。
+- `public/media/` 里的 mp4 是 InnAIO 声音克隆翻译器战役成片。
 - 页面代码为这个项目本身，没有再打包第三方灯箱或图表库；播放、筛选和柱状图是页面自己的。
 
 换成你自己的照片和成片之后，就可以删掉示例说明，或改掉页脚那一行「示例站点」。

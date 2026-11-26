@@ -216,6 +216,9 @@ function reelHtml(): string {
       </article>`,
     )
     .join("");
+  const count = reel.films.length;
+  const stageHeight =
+    count <= 3 ? "clamp(340px, 42vw, 480px)" : count === 4 ? "clamp(240px, 26vw, 340px)" : "clamp(220px, 24vw, 320px)";
   return `<section class="section reel reveal" id="featured" aria-label="最近の作品">
     <div class="wrap">
       <div class="sec-head">
@@ -226,7 +229,7 @@ function reelHtml(): string {
       </div>
     </div>
     <div class="reel-scroll">
-      <div class="reel-row">${films}</div>
+      <div class="reel-row" style="--reel-h: ${stageHeight}">${films}</div>
     </div>
     <div class="wrap">${aiNoteHtml()}</div>
   </section>`;

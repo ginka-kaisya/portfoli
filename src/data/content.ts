@@ -78,6 +78,12 @@ export type Highlight = {
 const photo = (id: string, width: number) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${width}&q=80`;
 
+/** 2 用「两」，其余用中文数字，方便「最近の作品」的支数跟着数组长度走。 */
+function filmCountWord(count: number): string {
+  const words = ["零", "一", "两", "三", "四", "五", "六", "七", "八", "九", "十"];
+  return words[count] ?? String(count);
+}
+
 export const site = {
   name: "田中",
   nameEn: "Tanaka",
@@ -88,7 +94,7 @@ export const site = {
   issue: "2026 秋冬",
   locationNote: "京都 · 示例封面",
   description:
-    "田中的作品集。InnAIO Japan 海外达人合作。两支声音克隆翻译器短片，图片与数字仍为示例。",
+    "田中的作品集。InnAIO Japan 海外达人合作。声音克隆翻译器短片，图片与数字仍为示例。",
   updated: "2026-11-26",
 };
 
@@ -137,7 +143,7 @@ export const markets = {
 
 export const reel = {
   title: "最近の作品",
-  lede: "生活与会议。两支 InnAIO 声音克隆翻译器短片。",
+  lede: "",
   films: [
     {
       id: "pizza-chicken",
@@ -161,8 +167,23 @@ export const reel = {
       poster: "media/global-meeting.jpg",
       ratio: "832 / 1056",
     },
+    {
+      id: "holiday-gift",
+      issue: "03",
+      titleJa: "最高のホリデーギフト",
+      titleZh: "完美的节日礼物",
+      category: "节日 / 产品展示",
+      duration: "0:10",
+      src: "media/holiday-gift.mp4",
+      poster: "media/holiday-gift.jpg",
+      ratio: "720 / 1280",
+    },
+    // 下一支加在这里：复制上面一项，改 id、文案和 src。id 用英文且不要重复，并在 works 里加同一条，点开才能有声播放。
   ] satisfies ReelFilm[],
 };
+
+reel.lede = `生活、会议，与节日。${filmCountWord(reel.films.length)}支 InnAIO 声音克隆翻译器短片。`;
+site.description = `田中的作品集。InnAIO Japan 海外达人合作。${filmCountWord(reel.films.length)}支声音克隆翻译器短片，图片与数字仍为示例。`;
 
 export const works: WorkItem[] = [
   {
@@ -196,6 +217,22 @@ export const works: WorkItem[] = [
     frame: "portrait",
     ratio: "832 / 1056",
     duration: "0:15",
+    span: 4,
+    example: false,
+  },
+  {
+    id: "holiday-gift",
+    title: "完美的节日礼物",
+    titleJa: "最高のホリデーギフト",
+    category: "节日 / 产品展示",
+    type: "video",
+    src: "media/holiday-gift.mp4",
+    thumbnail: "media/holiday-gift.jpg",
+    description: "深绿、朱红和金。翻译器被放在礼物的位置，画面自己慢慢动，没有字幕。",
+    date: "2026-11-26",
+    frame: "portrait",
+    ratio: "720 / 1280",
+    duration: "0:10",
     span: 4,
     example: false,
   },
@@ -276,7 +313,7 @@ export const about = {
   imageAlt: "示例配图：安静的室内，不是田中的肖像",
   paragraphs: [
     "田中在 InnAIO Japan 做海外达人合作。工作从日本出发，把产品交到不同市场的创作者手里：选人、对脚本、看播出、复盘下一次该换谁。",
-    "这个页面用杂志的方式放作品和成绩。上面两支短片是 InnAIO 声音克隆翻译器的战役成片。其余图片和数字仍是示例。换成更多真实案例时，改 src/data/content.ts。",
+    `这个页面用杂志的方式放作品和成绩。上面${filmCountWord(reel.films.length)}支短片是 InnAIO 声音克隆翻译器的战役成片。其余图片和数字仍是示例。换成更多真实案例时，改 src/data/content.ts。`,
   ],
   facts: [
     { label: "机构", value: "InnAIO Japan" },
