@@ -226,7 +226,12 @@ function reelHtml(): string {
     <div class="reel-scroll">
       <div class="reel-row">${films}</div>
     </div>
+    <div class="wrap">${aiNoteHtml()}</div>
   </section>`;
+}
+
+function aiNoteHtml(): string {
+  return `<p class="ai-note"><span>作品均由 AI 生成或辅助创作</span><span lang="ja">作品はすべてAIによる生成、またはAIを活用して制作しています。</span></p>`;
 }
 
 function seriesHtml(): string {
@@ -401,6 +406,7 @@ function pageHtml(): string {
         <p class="works-count" id="works-count" aria-live="polite"></p>
         ${featureHtml()}
         <div class="works-grid" id="works-grid"></div>
+        ${aiNoteHtml()}
       </div>
     </section>
 

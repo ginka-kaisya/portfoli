@@ -607,6 +607,23 @@ h2 {
   font-size: 0.8rem;
 }
 
+.ai-note {
+  margin: 1.8rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  color: #4a453f;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  line-height: 1.75;
+}
+
+.ai-note span { display: block; }
+
+.ai-note span + span {
+  margin-top: 0.12rem;
+  font-family: "Noto Serif JP", "Yu Mincho", "Noto Serif SC", serif;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
