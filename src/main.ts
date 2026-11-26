@@ -1,5 +1,6 @@
 import {
   about,
+  collabs,
   contact,
   highlights,
   impressionSeries,
@@ -8,6 +9,7 @@ import {
   site,
   works,
   hero,
+  type CollabReel,
   type WorkItem,
   type WorkMetrics,
 } from "./data/content";
@@ -302,6 +304,83 @@ function featureHtml(): string {
   </section>`;
 }
 
+function embedPermalink(url: string): string {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return "";
+    parsed.searchParams.set("utm_source", "ig_embed");
+    parsed.searchParams.set("utm_campaign", "loading");
+    return parsed.toString();
+  } catch {
+    return "";
+  }
+}
+
+function collabCard(item: CollabReel, index: number): string {
+  const permalink = embedPermalink(item.url);
+  const badge = item.sample === false ? "" : `<p class="collab-badge">示例 / サンプル</p>`;
+  const plays = item.plays?.trim()
+    ? `<p class="collab-plays">播放 / plays · ${esc(item.plays.trim())}</p>`
+    : "";
+  const embed = permalink
+    ? `<div class="collab-embed">
+        <blockquote class="instagram-media" data-instgrm-permalink="${esc(permalink)}" data-instgrm-version="14">
+          <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.collaborator)}</a>
+        </blockquote>
+      </div>`
+    : "";
+  const open = permalink
+    ? `<a class="collab-link" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">在 Instagram 打开 / Instagramで開く</a>`
+    : "";
+  return `<article class="collab-card" style="--i:${index}">
+    ${badge}
+    ${embed}
+    <h3>${esc(item.collaborator)}</h3>
+    <p class="collab-role">${esc(item.role)}</p>
+    ${plays}
+    ${open}
+  </article>`;
+}
+
+function collabsHtml(): string {
+  if (!collabs.items.length) return "";
+  const note =
+    collabs.noteZh || collabs.noteJa
+      ? `<p class="collab-note">${collabs.noteZh ? esc(collabs.noteZh) : ""}${collabs.noteZh && collabs.noteJa ? " / " : ""}${collabs.noteJa ? `<span lang="ja">${esc(collabs.noteJa)}</span>` : ""}</p>`
+      : "";
+  return `<section class="section collabs reveal" id="collabs" aria-label="合作短视频">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Collaborations</span></div>
+        <h2>${esc(collabs.title)}</h2>
+        <p class="collab-sub" lang="ja">${esc(collabs.titleJa)}</p>
+        ${note}
+      </div>
+      <div class="collab-grid">${collabs.items.map((item, index) => collabCard(item, index)).join("")}</div>
+    </div>
+  </section>`;
+}
+
+function mountInstagramEmbeds(): void {
+  if (!document.querySelector(".instagram-media")) return;
+  const process = () => {
+    window.instgrm?.Embeds.process();
+  };
+  if (window.instgrm?.Embeds) {
+    process();
+    return;
+  }
+  const src = "https://www.instagram.com/embed.js";
+  let script = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+  if (!script) {
+    script = document.createElement("script");
+    script.async = true;
+    script.src = src;
+    document.body.appendChild(script);
+  }
+  script.addEventListener("load", process, { once: true });
+}
+
 function pageHtml(): string {
   const stats = highlights
     .map(
@@ -353,6 +432,7 @@ function pageHtml(): string {
       <a href="#figures">数据</a>
       <a href="#works">作品</a>
       <a href="#about">关于</a>
+      ${collabs.items.length ? `<a href="#collabs">合作</a>` : ""}
       <a href="#contact">联络</a>
     </nav>
     <p class="issue-label">${esc(site.issue)}</p>
@@ -428,9 +508,11 @@ function pageHtml(): string {
       </div>
     </section>
 
+    ${collabsHtml()}
+
     <section class="section contact reveal" id="contact">
       <div class="wrap">
-        <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Contact</span></div>
+        <div class="sec-label"><span class="sec-no">${collabs.items.length ? "07" : "06"}</span><span class="sec-en" lang="en">Contact</span></div>
         <h2>${esc(contact.title)}</h2>
         <div class="contact-list">${links}</div>
       </div>
@@ -713,7 +795,7 @@ function splitHeading(el: HTMLElement): void {
   );
 }
 
-document.querySelectorAll<HTMLElement>("h1, .sec-head h2, blockquote").forEach(splitHeading);
+document.querySelectorAll<HTMLElement>("h1, .sec-head h2, blockquote:not(.instagram-media)").forEach(splitHeading);
 
 let scrollQueued = false;
 function paintScroll(): void {
@@ -870,6 +952,7 @@ function bindReel(reduce: boolean): void {
 
 renderGrid();
 bindReel(reduceMotion);
+mountInstagramEmbeds();
 
 const initial = new URL(location.href).searchParams.get("work");
 if (initial && works.some((work) => work.id === initial)) openWork(initial);
