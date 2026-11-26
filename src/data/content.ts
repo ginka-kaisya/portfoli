@@ -369,6 +369,56 @@ export const about = {
   ],
 };
 
+/**
+ * 合作短视频。每条换成真实合作即可。
+ * - url           公开的 Instagram 帖子或 Reel 链接
+ * - collaborator  对方账号名称
+ * - role          本人在这条合作里的角色
+ * - plays         可选。只写播放次数，例如 "186万"。不写就不显示。不要填曝光或播放率。
+ * - sample        可选。不写或 true 会标「示例 / サンプル」。真实条目写 false。
+ * noteZh / noteJa 是整区的一行说明。换成真实合作后留空，页面就不再显示。
+ */
+export type CollabReel = {
+  url: string;
+  collaborator: string;
+  role: string;
+  plays?: string;
+  sample?: boolean;
+};
+
+export const collabs = {
+  title: "合作短视频",
+  titleJa: "コラボ動画",
+  noteZh: "以下为占位示例，并非田中的作品。",
+  noteJa: "以下はサンプルであり、田中の作品ではありません。",
+  items: [
+    {
+      url: "https://www.instagram.com/reel/DdcI4o0Prsz/",
+      collaborator: "Instagram",
+      role: "示例 / サンプル",
+      sample: true,
+    },
+    {
+      url: "https://www.instagram.com/reel/DeTUk4sDSp-/",
+      collaborator: "NASA",
+      role: "示例 / サンプル",
+      sample: true,
+    },
+    {
+      url: "https://www.instagram.com/reel/DHO_wDACVyE/",
+      collaborator: "National Geographic",
+      role: "示例 / サンプル",
+      sample: true,
+    },
+    {
+      url: "https://www.instagram.com/reel/DbRF0YXgtbw/",
+      collaborator: "National Geographic",
+      role: "示例 / サンプル",
+      sample: true,
+    },
+  ] satisfies CollabReel[],
+};
+
 export const contact = {
   title: "想合作，或只是打个招呼。",
   links: [
