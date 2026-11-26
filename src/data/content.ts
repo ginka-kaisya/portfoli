@@ -14,6 +14,13 @@
  * - frame         portrait 竖图 / landscape 横图 / square 方图
  * - metrics       可选。不写就不显示
  * - featured      可选。true 的视频会在作品区顶部内嵌播放（只放一个）
+ * - example       可选。false 表示真实成片，卡片不再标「示例」
+ * - titleJa       可选。日文标题，灯箱里跟在中文标题后面
+ * - duration      可选。片长，例如 "0:29"
+ * - ratio         可选。CSS 宽高比，例如 "1080 / 1920"，避免裁掉画面里的字
+ * - span          可选。作品墙跨列，不写就按默认节奏
+ *
+ * 首页「最近の作品」用下面的 reel。三支成片同时写进 works，作品墙里也能筛到。
  *
  * 本地影片：把 mp4 放进 public/media/，src 写成 "media/你的文件.mp4"
  * YouTube：src 贴观看链接即可，例如 https://www.youtube.com/watch?v=xxxxxxxx
@@ -41,6 +48,23 @@ export type WorkItem = {
   frame: "portrait" | "landscape" | "square";
   metrics?: WorkMetrics;
   featured?: boolean;
+  example?: boolean;
+  titleJa?: string;
+  duration?: string;
+  ratio?: string;
+  span?: number;
+};
+
+export type ReelFilm = {
+  id: string;
+  issue: string;
+  titleJa: string;
+  titleZh: string;
+  category: string;
+  duration: string;
+  src: string;
+  poster: string;
+  ratio: string;
 };
 
 export type Highlight = {
@@ -64,7 +88,7 @@ export const site = {
   issue: "2026 秋冬",
   locationNote: "京都 · 示例封面",
   description:
-    "田中的作品集。InnAIO Japan 海外达人合作，以杂志的方式陈列图片、影片与战役数据。当前内容为示例。",
+    "田中的作品集。InnAIO Japan 海外达人合作。三支声音克隆翻译器短片，图片与数字仍为示例。",
   updated: "2026-11-26",
 };
 
@@ -76,15 +100,15 @@ export const hero = {
 /** 首页数据看板。数字都是示例，直接改 value。 */
 export const highlights: Highlight[] = [
   { label: "合作达人", value: 128, decimals: 0, unit: "位", hint: "本年度合作" },
-  { label: "累计曝光", value: 2460, decimals: 0, unit: "万", hint: "跨平台合计" },
-  { label: "平均互动率", value: 4.8, decimals: 1, unit: "%", hint: "互动 ÷ 曝光" },
+  { label: "累计播放", value: 2460, decimals: 0, unit: "万", hint: "跨平台合计" },
+  { label: "平均互动率", value: 4.8, decimals: 1, unit: "%", hint: "互动 ÷ 播放" },
   { label: "覆盖市场", value: 12, decimals: 0, unit: "个", hint: "国家与地区" },
   { label: "品牌战役", value: 36, decimals: 0, unit: "场", hint: "已结案战役" },
 ];
 
 /** 柱状图。value 的单位写在 unit 里，页面会按最大值自动缩放。 */
 export const impressionSeries = {
-  title: "近六月曝光",
+  title: "近六月播放",
   note: "单位：万次 · 示例数据",
   unit: "万",
   points: [
@@ -100,7 +124,7 @@ export const impressionSeries = {
 /** 横向条。value 按相对大小画长度，不必加总为 100。suffix 会跟在数字后面。 */
 export const markets = {
   title: "市场分布",
-  note: "按曝光占比 · 示例",
+  note: "按播放占比 · 示例",
   suffix: "%",
   items: [
     { label: "日本", value: 36 },
@@ -111,7 +135,97 @@ export const markets = {
   ],
 };
 
+export const reel = {
+  title: "最近の作品",
+  lede: "生活、会议，与节日。三支 InnAIO 声音克隆翻译器短片。",
+  films: [
+    {
+      id: "pizza-chicken",
+      issue: "01",
+      titleJa: "ピザ？チキン？",
+      titleZh: "披萨还是炸鸡？跨语言日常",
+      category: "社媒短视频 / Lifestyle",
+      duration: "0:29",
+      src: "media/pizza-chicken.mp4",
+      poster: "media/pizza-chicken.jpg",
+      ratio: "1080 / 1920",
+    },
+    {
+      id: "global-meeting",
+      issue: "02",
+      titleJa: "スムーズなグローバル会議",
+      titleZh: "无界商务会议",
+      category: "B2B",
+      duration: "0:15",
+      src: "media/global-meeting.mp4",
+      poster: "media/global-meeting.jpg",
+      ratio: "832 / 1056",
+    },
+    {
+      id: "holiday-gift",
+      issue: "03",
+      titleJa: "最高のホリデーギフト",
+      titleZh: "完美的节日礼物",
+      category: "节日 / 产品展示",
+      duration: "0:10",
+      src: "media/holiday-gift.mp4",
+      poster: "media/holiday-gift.jpg",
+      ratio: "720 / 1280",
+    },
+  ] satisfies ReelFilm[],
+};
+
 export const works: WorkItem[] = [
+  {
+    id: "pizza-chicken",
+    title: "披萨还是炸鸡？跨语言日常",
+    titleJa: "ピザ？チキン？",
+    category: "社媒短视频 / Lifestyle",
+    type: "video",
+    src: "media/pizza-chicken.mp4",
+    thumbnail: "media/pizza-chicken.jpg",
+    description:
+      "日语和韩语的一对拌嘴：今晚披萨，还是炸鸡。翻译器把话接上。片尾是「言葉の壁を、なくそう。」",
+    date: "2026-11-26",
+    frame: "portrait",
+    ratio: "1080 / 1920",
+    duration: "0:29",
+    span: 4,
+    example: false,
+  },
+  {
+    id: "global-meeting",
+    title: "无界商务会议",
+    titleJa: "スムーズなグローバル会議",
+    category: "B2B",
+    type: "video",
+    src: "media/global-meeting.mp4",
+    thumbnail: "media/global-meeting.jpg",
+    description:
+      "俯拍一场跨国会议，设备放在桌面中央，日英字幕一起走。片尾是「言葉の壁を越えて、ビジネスをもっとスムーズに。」",
+    date: "2026-11-26",
+    frame: "portrait",
+    ratio: "832 / 1056",
+    duration: "0:15",
+    span: 4,
+    example: false,
+  },
+  {
+    id: "holiday-gift",
+    title: "完美的节日礼物",
+    titleJa: "最高のホリデーギフト",
+    category: "节日 / 产品展示",
+    type: "video",
+    src: "media/holiday-gift.mp4",
+    thumbnail: "media/holiday-gift.jpg",
+    description: "深绿、朱红和金。翻译器被放在礼物的位置，画面自己慢慢动，没有字幕。",
+    date: "2026-11-26",
+    frame: "portrait",
+    ratio: "720 / 1280",
+    duration: "0:10",
+    span: 4,
+    example: false,
+  },
   {
     id: "morning-path",
     title: "清晨的参道",
@@ -128,24 +242,6 @@ export const works: WorkItem[] = [
       views: "186万",
       likes: "4.2万",
       engagementRate: "6.8%",
-    },
-  },
-  {
-    id: "three-minutes",
-    title: "三分钟讲清楚",
-    category: "产品开箱",
-    type: "video",
-    src: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
-    thumbnail: photo("1556228720-195a672e8a03", 1200),
-    description:
-      "示例 YouTube。把观看链接贴进 src 就能嵌进页面。片中画面是公开样片，正式项目请换成达人成片。",
-    date: "2026-04-09",
-    frame: "portrait",
-    metrics: {
-      platform: "YouTube",
-      views: "92万",
-      likes: "1.8万",
-      engagementRate: "4.1%",
     },
   },
   {
@@ -175,25 +271,6 @@ export const works: WorkItem[] = [
     description: "示例街拍。没有单条数据的作品也可以，不填 metrics 就不会出现数字。",
     date: "2026-05-16",
     frame: "landscape",
-  },
-  {
-    id: "window-flower",
-    title: "窗边的花",
-    category: "城市纪实",
-    type: "video",
-    src: "media/sample-flower.mp4",
-    thumbnail: photo("1490750967868-88aa4486c946", 1400),
-    description:
-      "示例本地 MP4，文件在 public/media/sample-flower.mp4。可以在卡片里直接播放，也可以打开弹层看。画面为 CC0 样片。",
-    date: "2026-06-28",
-    frame: "square",
-    featured: true,
-    metrics: {
-      platform: "TikTok",
-      views: "240万",
-      likes: "9.6万",
-      engagementRate: "5.5%",
-    },
   },
   {
     id: "before-swatch",
@@ -282,7 +359,7 @@ export const about = {
   imageAlt: "示例配图：安静的室内，不是田中的肖像",
   paragraphs: [
     "田中在 InnAIO Japan 做海外达人合作。工作从日本出发，把产品交到不同市场的创作者手里：选人、对脚本、看播出、复盘下一次该换谁。",
-    "这个页面用杂志的方式放作品和成绩。你现在看到的图片、影片和数字都是示例，方便先把版式定下来。换成真实案例时，只改 src/data/content.ts。",
+    "这个页面用杂志的方式放作品和成绩。上面三支短片是 InnAIO 声音克隆翻译器的战役成片。其余图片和数字仍是示例。换成更多真实案例时，改 src/data/content.ts。",
   ],
   facts: [
     { label: "机构", value: "InnAIO Japan" },

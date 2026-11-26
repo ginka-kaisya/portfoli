@@ -2,7 +2,7 @@
 
 InnAIO Japan 海外达人合作的个人作品集。日系清新杂志风，静态页面，适合免费放在 GitHub Pages 上，任何人随时都能打开。
 
-现在的图片、影片和数字都是**示例**。换成真实内容时，主要只改一个文件：`src/data/content.ts`。
+首页「最近の作品」里的三支短片是 InnAIO 战役成片。其余图片和数字仍是**示例**。换成更多真实内容时，主要改 `src/data/content.ts`。
 
 ## 本地预览
 
@@ -30,7 +30,7 @@ npm run preview
 | `src/main.ts` | 页面交互：筛选、灯箱、播放 |
 | `src/style.css` | 版式 |
 | `public/media/` | 本地 mp4 和你自己的封面图 |
-| `public/media/sample-flower.mp4` | CC0 示例短片，可删 |
+| `public/media/*.mp4` | 战役成片。封面 jpg 用 ffmpeg 从指定秒数抽出 |
 | `.github/workflows/pages.yml` | 推送到 `main` 后自动发布到 GitHub Pages |
 
 若改了姓名，请同时改 `index.html` 里的 `<title>` 和 description，这样分享链接的标题也会变。
@@ -115,7 +115,7 @@ npm run preview
 
 - 字体：Google Fonts 上的 Noto Serif SC / Noto Serif JP / Noto Sans SC / Noto Sans JP / Cormorant Garamond，采用 SIL Open Font License。
 - 示例图片：Unsplash，按 [Unsplash License](https://unsplash.com/license) 使用，只作占位。
-- `public/media/sample-flower.mp4`：MDN 提供的 CC0 示例短片。
+- `public/media/` 里的三支 mp4 是 InnAIO 声音克隆翻译器战役成片。
 - 页面代码为这个项目本身，没有再打包第三方灯箱或图表库；播放、筛选和柱状图是页面自己的。
 
 换成你自己的照片和成片之后，就可以删掉示例说明，或改掉页脚那一行「示例站点」。

@@ -4,6 +4,7 @@ import {
   highlights,
   impressionSeries,
   markets,
+  reel,
   site,
   works,
   hero,
@@ -102,14 +103,28 @@ for (const work of works) {
   seen.add(work.id);
 }
 
-const featured =
-  works.find((work) => work.featured && work.type === "video") ??
-  works.find((work) => work.type === "video");
+const featured = works.find((work) => work.featured && work.type === "video");
 
 const SPANS = [7, 5, 5, 7, 4, 4, 4, 6, 6];
 
 function iconPlay(): string {
   return `<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M8 5.2v13.6L19.2 12 8 5.2z"/></svg>`;
+}
+
+function iconPlayMark(): string {
+  return `<svg class="reel-play-icon" viewBox="0 0 40 40" aria-hidden="true" width="34" height="34"><circle cx="20" cy="20" r="13.25" fill="rgba(250,247,242,0.28)" stroke="currentColor" stroke-width="1"/><path fill="currentColor" d="M17.1 14.4v11.2L26.6 20z"/></svg>`;
+}
+
+function isTall(work: WorkItem): boolean {
+  if (!work.ratio) return false;
+  const [width, height] = work.ratio.split("/").map((part) => Number(part.trim()));
+  return Number.isFinite(width) && Number.isFinite(height) && height > width;
+}
+
+function kickerBits(work: WorkItem): string {
+  const example = work.example === false ? "" : `<span>示例</span> · `;
+  const duration = work.duration ? ` · ${esc(work.duration)}` : "";
+  return `${example}${esc(work.category)}${duration} · <time datetime="${esc(work.date)}">${esc(formatDate(work.date))}</time>`;
 }
 
 function iconClose(): string {
@@ -122,14 +137,15 @@ function thumb(work: WorkItem, eager = false): string {
 }
 
 function playerMarkup(work: WorkItem, autoplay: boolean, cover: boolean): string {
-  const fit = cover ? " is-cover" : "";
   const yt = youtubeId(work.src);
   if (work.type === "video" && yt) {
     const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(yt)}?rel=0&modestbranding=1${autoplay ? "&autoplay=1" : ""}`;
-    return `<iframe class="player-frame${fit}" src="${esc(src)}" title="${esc(work.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+    const coverFit = cover ? " is-cover" : "";
+    return `<iframe class="player-frame${coverFit}" src="${esc(src)}" title="${esc(work.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
   }
   if (work.type === "video" && isDirectVideo(work.src)) {
-    return `<video class="player-frame${fit}" controls playsinline ${autoplay ? "autoplay" : ""} poster="${esc(withBase(work.thumbnail))}" src="${esc(withBase(work.src))}"></video>`;
+    const coverFit = cover && !work.ratio ? " is-cover" : "";
+    return `<video class="player-frame${coverFit}" controls playsinline ${autoplay ? "autoplay" : ""} poster="${esc(withBase(work.thumbnail))}" src="${esc(withBase(work.src))}"></video>`;
   }
   if (work.type === "video") {
     return `<div class="player-fallback"><p>这条链接暂时不能内嵌播放。</p><p><a href="${esc(work.src)}" target="_blank" rel="noopener noreferrer">在新窗口打开</a></p></div>`;
@@ -159,24 +175,57 @@ function matches(work: WorkItem, filter: string): boolean {
 }
 
 function cardHtml(work: WorkItem, index: number): string {
-  const span = SPANS[index % SPANS.length];
+  const span = work.span ?? SPANS[index % SPANS.length];
   const line = metricLine(work.metrics);
+  const ratio = work.ratio ? ` has-ratio" style="--ar: ${esc(work.ratio)}` : "";
   const play =
     work.type === "video"
       ? `<button type="button" class="play-btn" data-play="${esc(work.id)}" aria-label="在卡片中播放「${esc(work.title)}」">${iconPlay()}<span>播放</span></button>`
       : "";
-  return `<article class="card" data-span="${span}">
-    <div class="card-media ${esc(work.frame)}">
+  return `<article class="card" data-span="${span}" style="--i:${index}">
+    <div class="card-media ${esc(work.frame)}${ratio}">
       <div class="media-slot" data-inline-for="${esc(work.id)}">${thumb(work)}</div>
       ${play}
       <button type="button" class="open-media" data-open="${esc(work.id)}" aria-label="查看「${esc(work.title)}」"></button>
     </div>
     <button type="button" class="card-copy" data-open="${esc(work.id)}">
-      <p class="kicker"><span>示例</span> · ${esc(work.category)} · <time datetime="${esc(work.date)}">${esc(formatDate(work.date))}</time></p>
+      <p class="kicker">${kickerBits(work)}</p>
       <h3>${esc(work.title)}</h3>
       ${line ? `<p class="card-metrics">${esc(line)}</p>` : ""}
     </button>
   </article>`;
+}
+
+function reelHtml(): string {
+  const films = reel.films
+    .map(
+      (film, index) => `<article class="reel-item" style="--i:${index}">
+        <div class="reel-stage" style="--ar: ${esc(film.ratio)}">
+          <video muted loop playsinline preload="none" poster="${esc(withBase(film.poster))}" src="${esc(withBase(film.src))}"></video>
+          <button type="button" class="reel-hit" data-open="${esc(film.id)}" aria-label="有声播放「${esc(film.titleZh)}」">${iconPlayMark()}</button>
+        </div>
+        <button type="button" class="reel-copy" data-open="${esc(film.id)}">
+          <p class="reel-no">${esc(film.issue)}</p>
+          <h3 lang="ja">${esc(film.titleJa)}</h3>
+          <p class="reel-zh">${esc(film.titleZh)}</p>
+          <p class="reel-kicker">${esc(film.category)} · ${esc(film.duration)}</p>
+        </button>
+      </article>`,
+    )
+    .join("");
+  return `<section class="section reel reveal" id="featured" aria-label="最近の作品">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-label"><span class="sec-no">02</span><span class="sec-en" lang="en">Featured Works</span></div>
+        <h2 lang="ja">${esc(reel.title)}</h2>
+        <p class="lede">${esc(reel.lede)}</p>
+        <p class="reel-note"><span class="reel-note-swipe">左右滑动 · </span>静音预览 · 点开有声</p>
+      </div>
+    </div>
+    <div class="reel-scroll">
+      <div class="reel-row">${films}</div>
+    </div>
+  </section>`;
 }
 
 function seriesHtml(): string {
@@ -187,7 +236,7 @@ function seriesHtml(): string {
       const last = index === impressionSeries.points.length - 1 ? " is-last" : "";
       return `<div class="vcol">
         <span class="vval">${esc(String(point.value))}</span>
-        <div class="vtrack"><div class="vbar${last}" style="--h:${height}%"></div></div>
+        <div class="vtrack"><div class="vbar${last}" style="--h:${height}%;--i:${index}"></div></div>
         <span class="vlab">${esc(point.label)}</span>
       </div>`;
     })
@@ -208,9 +257,9 @@ function seriesHtml(): string {
 function marketsHtml(): string {
   const max = Math.max(...markets.items.map((item) => item.value), 1);
   const rows = markets.items
-    .map((item) => {
+    .map((item, index) => {
       const width = Math.max(6, Math.round((item.value / max) * 100));
-      return `<div class="hbar">
+      return `<div class="hbar" style="--i:${index}">
         <div class="hbar-top"><span>${esc(item.label)}</span><span>${esc(String(item.value))}${esc(markets.suffix)}</span></div>
         <div class="htrack"><div class="hfill" style="--w:${width}%"></div></div>
       </div>`;
@@ -250,7 +299,7 @@ function featureHtml(): string {
 function pageHtml(): string {
   const stats = highlights
     .map(
-      (item) => `<article class="stat">
+      (item, index) => `<article class="stat" style="--i:${index}">
         <p class="stat-label">${esc(item.label)}</p>
         <p class="stat-value"><span class="num" data-count="${item.value}" data-decimals="${item.decimals}">${esc(formatStat(item.value, item.decimals))}</span><span class="unit">${esc(item.unit)}</span></p>
         <p class="stat-hint">${esc(item.hint)}</p>
@@ -278,7 +327,15 @@ function pageHtml(): string {
     )
     .join("");
 
-  return `<p class="edge-mark" lang="en">Portfolio · ${esc(site.issue)}</p>
+  return `<div class="intro" id="intro">
+    <div class="intro-inner">
+      <p class="intro-kicker" lang="en">Portfolio · ${esc(site.issue)}</p>
+      <p class="intro-name">${esc(site.name)}</p>
+      <p class="intro-en" lang="en">${esc(site.nameEn)}</p>
+    </div>
+  </div>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <p class="edge-mark" lang="en">Portfolio · ${esc(site.issue)}</p>
   <header class="site-header">
     <a class="brand" href="#top">
       <span class="brand-mark" aria-hidden="true">${esc(site.name.slice(0, 1))}</span>
@@ -286,6 +343,7 @@ function pageHtml(): string {
     </a>
     <button type="button" class="menu-btn" aria-expanded="false" aria-controls="nav-links">目录</button>
     <nav id="nav-links" class="nav-links" aria-label="页内">
+      <a href="#featured">近作</a>
       <a href="#figures">数据</a>
       <a href="#works">作品</a>
       <a href="#about">关于</a>
@@ -313,12 +371,14 @@ function pageHtml(): string {
       </figure>
     </section>
 
+    ${reelHtml()}
+
     <section class="section figures reveal" id="figures">
       <div class="wrap">
         <div class="sec-head">
-          <div class="sec-label"><span class="sec-no">02</span><span class="sec-en" lang="en">Figures</span></div>
+          <div class="sec-label"><span class="sec-no">03</span><span class="sec-en" lang="en">Figures</span></div>
           <h2>这一季的数字</h2>
-          <p class="lede">合作达人、曝光、互动、市场和战役。下面的数字与图表都是示例，改数据文件就会一起变。</p>
+          <p class="lede">合作达人、播放、互动、市场和战役。下面的数字与图表都是示例，改数据文件就会一起变。</p>
         </div>
         <div class="stat-grid">${stats}</div>
         <div class="chart-layout">
@@ -332,7 +392,7 @@ function pageHtml(): string {
     <section class="section works reveal" id="works">
       <div class="wrap">
         <div class="sec-head">
-          <div class="sec-label"><span class="sec-no">03</span><span class="sec-en" lang="en">Selected Works</span></div>
+          <div class="sec-label"><span class="sec-no">04</span><span class="sec-en" lang="en">Selected Works</span></div>
           <h2>作品</h2>
           <p class="lede">图片点开看大图，影片可以在卡片里播放，也可以在弹层里看。分类来自数据文件。</p>
         </div>
@@ -346,7 +406,7 @@ function pageHtml(): string {
     <section class="section about reveal" id="about">
       <div class="wrap about-grid">
         <div>
-          <div class="sec-label"><span class="sec-no">04</span><span class="sec-en" lang="en">Profile</span></div>
+          <div class="sec-label"><span class="sec-no">05</span><span class="sec-en" lang="en">Profile</span></div>
           <blockquote>${esc(about.quote)}</blockquote>
           <figure class="about-figure">
             <img src="${esc(about.image)}" alt="${esc(about.imageAlt)}" data-seed="about" loading="lazy" decoding="async">
@@ -363,7 +423,7 @@ function pageHtml(): string {
 
     <section class="section contact reveal" id="contact">
       <div class="wrap">
-        <div class="sec-label"><span class="sec-no">05</span><span class="sec-en" lang="en">Contact</span></div>
+        <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Contact</span></div>
         <h2>${esc(contact.title)}</h2>
         <p class="lede">${esc(contact.note)}</p>
         <div class="contact-list">${links}</div>
@@ -373,7 +433,7 @@ function pageHtml(): string {
   <footer class="site-footer">
     <div class="wrap footer-row">
       <p>© ${esc(site.updated.slice(0, 4))} ${esc(site.name)}</p>
-      <p>示例站点 · 图片 Unsplash · 短片 CC0</p>
+      <p>图片 Unsplash · 短片为 InnAIO 战役成片 · 数据为示例</p>
     </div>
   </footer>
   <dialog class="lightbox" id="lightbox" aria-labelledby="lb-title"></dialog>`;
@@ -381,6 +441,7 @@ function pageHtml(): string {
 
 let activeFilter = "all";
 let visible: WorkItem[] = works.slice();
+let syncReel = (): void => {};
 
 const app = document.querySelector<HTMLElement>("#app");
 if (!app) throw new Error("找不到 #app");
@@ -421,10 +482,14 @@ function playInline(id: string, origin: HTMLElement): void {
   if (!slot) return;
   resetInline(slot);
   document.querySelectorAll("video").forEach((video) => video.pause());
-  slot.innerHTML = playerMarkup(work, true, true);
+  slot.innerHTML = playerMarkup(work, true, !work.ratio);
   slot.closest(".card-media, .feature-stage")?.classList.add("is-playing");
   const video = slot.querySelector("video");
-  if (video) void video.play().catch(() => undefined);
+  if (video) {
+    video.muted = true;
+    void video.play().catch(() => undefined);
+  }
+  syncReel();
 }
 
 function cycleOf(id: string): WorkItem[] {
@@ -448,14 +513,23 @@ function lightboxHtml(work: WorkItem): string {
           <button type="button" data-goto="${esc(next.id)}">下一件</button>
         </div>`
       : "";
+  const tall = work.type === "video" && isTall(work);
+  const mediaStyle = work.ratio ? ` style="--ar: ${esc(work.ratio)}"` : "";
+  const ja = work.titleJa ? `<p class="lb-ja" lang="ja">${esc(work.titleJa)}</p>` : "";
+  const metricsBlock = entries.length
+    ? metrics
+    : work.example === false
+      ? ""
+      : `<p class="lb-nometrics">这条作品没有附带数据。</p>`;
   return `<div class="lb-layout">
-    <div class="lb-media">${playerMarkup(work, work.type === "video", false)}</div>
+    <div class="lb-media${tall ? " is-tall" : ""}"${mediaStyle}>${playerMarkup(work, work.type === "video", false)}</div>
     <div class="lb-copy">
       <button type="button" class="lb-close" data-close aria-label="关闭">${iconClose()}</button>
-      <p class="kicker">示例 · ${esc(work.category)} · <time datetime="${esc(work.date)}">${esc(formatDate(work.date))}</time></p>
+      <p class="kicker">${kickerBits(work)}</p>
       <h2 id="lb-title">${esc(work.title)}</h2>
+      ${ja}
       <p>${esc(work.description)}</p>
-      ${metrics}
+      ${metricsBlock}
       <div class="lb-actions">
         <button type="button" class="text-btn" data-copy>复制链接</button>
         <span id="copy-status" role="status"></span>
@@ -478,21 +552,43 @@ function openWork(id: string): void {
   if (!work) return;
   resetInline();
   document.querySelectorAll("video").forEach((video) => video.pause());
+  dialog!.classList.remove("is-closing");
   dialog!.innerHTML = lightboxHtml(work);
   if (!dialog!.open) dialog!.showModal();
   document.body.classList.add("lock");
   setWorkParam(id);
+  const video = dialog!.querySelector("video");
+  if (video) {
+    video.muted = false;
+    void video.play().catch(() => undefined);
+  }
+  syncReel();
   dialog!.querySelector<HTMLElement>(".lb-close")?.focus();
 }
 
 function closeWork(): void {
-  if (dialog!.open) dialog!.close();
+  if (!dialog!.open) return;
+  if (reduceMotion || dialog!.classList.contains("is-closing")) {
+    dialog!.classList.remove("is-closing");
+    dialog!.close();
+    return;
+  }
+  dialog!.classList.add("is-closing");
+  const finish = (event?: Event) => {
+    if (event && event.target !== dialog) return;
+    dialog!.removeEventListener("transitionend", finish);
+    dialog!.classList.remove("is-closing");
+    if (dialog!.open) dialog!.close();
+  };
+  dialog!.addEventListener("transitionend", finish);
+  window.setTimeout(finish, 480);
 }
 
 dialog.addEventListener("close", () => {
   dialog.innerHTML = "";
   document.body.classList.remove("lock");
   setWorkParam(null);
+  syncReel();
 });
 
 dialog.addEventListener("click", (event) => {
@@ -589,9 +685,59 @@ nav?.addEventListener("click", (event) => {
 });
 
 const header = document.querySelector(".site-header");
-const onScroll = () => header?.classList.toggle("is-scrolled", window.scrollY > 8);
-onScroll();
-window.addEventListener("scroll", onScroll, { passive: true });
+const progress = document.querySelector<HTMLElement>(".scroll-progress");
+const heroImg = document.querySelector<HTMLImageElement>(".hero-figure img");
+const navAnchors = [...document.querySelectorAll<HTMLAnchorElement>(".nav-links a")];
+
+function splitHeading(el: HTMLElement): void {
+  if (el.dataset.split === "1") return;
+  const text = el.textContent ?? "";
+  if (!text.trim()) return;
+  el.dataset.split = "1";
+  el.setAttribute("aria-label", text);
+  el.replaceChildren(
+    ...[...text].map((char, index) => {
+      const span = document.createElement("span");
+      span.className = "char";
+      span.style.setProperty("--i", String(index));
+      span.setAttribute("aria-hidden", "true");
+      span.textContent = char === " " ? "\u00a0" : char;
+      return span;
+    }),
+  );
+}
+
+document.querySelectorAll<HTMLElement>("h1, .sec-head h2, blockquote").forEach(splitHeading);
+
+let scrollQueued = false;
+function paintScroll(): void {
+  scrollQueued = false;
+  const y = window.scrollY;
+  header?.classList.toggle("is-scrolled", y > 8);
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  if (progress) progress.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+  if (heroImg?.dataset.parallax === "1") {
+    const shift = Math.min(y, 720) * 0.08;
+    heroImg.style.transform = `translate3d(0, ${shift.toFixed(2)}px, 0) scale(1.06)`;
+  }
+  const mark = y + 96;
+  let current = navAnchors[0];
+  for (const link of navAnchors) {
+    const id = link.getAttribute("href")?.slice(1);
+    const section = id ? document.getElementById(id) : null;
+    if (!section) continue;
+    if (section.offsetTop <= mark) current = link;
+  }
+  for (const link of navAnchors) link.classList.toggle("is-current", link === current);
+}
+
+function queueScroll(): void {
+  if (scrollQueued) return;
+  scrollQueued = true;
+  requestAnimationFrame(paintScroll);
+}
+
+window.addEventListener("scroll", queueScroll, { passive: true });
 
 function animateCount(el: HTMLElement): void {
   const target = Number(el.dataset.count);
@@ -610,9 +756,19 @@ function animateCount(el: HTMLElement): void {
 }
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const intro = document.querySelector<HTMLElement>("#intro");
+
 if (reduceMotion) {
+  intro?.remove();
+  document.documentElement.classList.add("is-ready");
   document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"));
 } else {
+  document.documentElement.classList.add("is-ready");
+  window.setTimeout(() => intro?.remove(), 1600);
+  if (finePointer && window.matchMedia("(min-width: 900px)").matches && heroImg) {
+    heroImg.dataset.parallax = "1";
+  }
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -622,10 +778,29 @@ if (reduceMotion) {
         entry.target.querySelectorAll<HTMLElement>("[data-count]").forEach(animateCount);
       }
     },
-    { threshold: 0.25 },
+    { threshold: 0.08 },
   );
   document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 }
+
+if (finePointer && !reduceMotion) {
+  document.querySelectorAll<HTMLElement>(".card").forEach((card) => {
+    if (!card.querySelector("[data-play]")) return;
+    const media = card.querySelector<HTMLElement>(".card-media");
+    if (!media) return;
+    const label = document.createElement("span");
+    label.className = "follow-play";
+    label.textContent = "播放";
+    label.setAttribute("aria-hidden", "true");
+    media.appendChild(label);
+    media.addEventListener("pointermove", (event) => {
+      const rect = media.getBoundingClientRect();
+      label.style.transform = `translate3d(${event.clientX - rect.left}px, ${event.clientY - rect.top}px, 0)`;
+    });
+  });
+}
+
+paintScroll();
 
 document.addEventListener(
   "error",
@@ -640,7 +815,55 @@ document.addEventListener(
   true,
 );
 
+function bindReel(reduce: boolean): void {
+  const stages = [...document.querySelectorAll<HTMLElement>(".reel-stage")];
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  const sync = (stage: HTMLElement) => {
+    const video = stage.querySelector("video");
+    if (!video) return;
+    const blocked = reduce || dialog!.open || Boolean(document.querySelector(".is-playing"));
+    const want = !blocked && (stage.dataset.hover === "1" || stage.dataset.inview === "1");
+    if (want) {
+      video.muted = true;
+      void video.play().catch(() => undefined);
+      stage.classList.add("is-previewing");
+    } else {
+      video.pause();
+      stage.classList.remove("is-previewing");
+    }
+  };
+
+  syncReel = () => stages.forEach(sync);
+
+  if (reduce) return;
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const stage = entry.target as HTMLElement;
+        stage.dataset.inview = entry.isIntersecting && entry.intersectionRatio >= 0.55 ? "1" : "0";
+        sync(stage);
+      }
+    },
+    { threshold: [0, 0.55, 0.8] },
+  );
+  for (const stage of stages) {
+    io.observe(stage);
+    if (!fine) continue;
+    stage.addEventListener("pointerenter", () => {
+      stage.dataset.hover = "1";
+      sync(stage);
+    });
+    stage.addEventListener("pointerleave", () => {
+      stage.dataset.hover = "0";
+      sync(stage);
+    });
+  }
+}
+
 renderGrid();
+bindReel(reduceMotion);
 
 const initial = new URL(location.href).searchParams.get("work");
 if (initial && works.some((work) => work.id === initial)) openWork(initial);
