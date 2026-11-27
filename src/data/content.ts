@@ -403,6 +403,8 @@ export type RunAccount = {
   /** 公开页上的显示名。读不到就不写。 */
   name?: string;
   href: string;
+  /** public/media 里的头像，避免外链会过期的图片。 */
+  avatar: string;
 };
 
 export const accounts = {
@@ -414,12 +416,14 @@ export const accounts = {
       handle: "@innaiojp",
       name: "INNAIO日本公式",
       href: "https://www.instagram.com/innaiojp/",
+      avatar: "media/innaiojp-logo.jpg",
     },
     {
-      platform: "X",
-      handle: "@UnifyDrive_jp",
-      name: "UnifyDrive Japan｜ポータブルNAS『UT2』",
-      href: "https://x.com/unifydrive_jp",
+      platform: "Instagram",
+      handle: "@unifydrive_jp",
+      name: "UnifyDrive",
+      href: "https://www.instagram.com/unifydrive_jp/",
+      avatar: "media/unifydrive-logo.jpg",
     },
   ] satisfies RunAccount[],
 };

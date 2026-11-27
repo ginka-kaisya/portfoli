@@ -370,10 +370,13 @@ function accountsHtml(): string {
   const cards = accounts.items
     .map(
       (item, index) => `<article class="account-card" style="--i:${index}">
-        <p class="account-platform">${esc(item.platform)}</p>
-        <h3>${esc(item.handle)}</h3>
-        ${item.name ? `<p class="account-name">${esc(item.name)}</p>` : ""}
-        <a class="account-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">查看账号 / アカウントを見る</a>
+        <img class="account-avatar" src="${esc(withBase(item.avatar))}" alt="" width="84" height="84">
+        <div class="account-copy">
+          <p class="account-platform">${esc(item.platform)}</p>
+          <h3>${esc(item.handle)}</h3>
+          ${item.name ? `<p class="account-name">${esc(item.name)}</p>` : ""}
+          <a class="account-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">查看账号 / アカウントを見る</a>
+        </div>
       </article>`,
     )
     .join("");
@@ -436,7 +439,7 @@ function pageHtml(): string {
 
   const links = contact.links
     .map(
-      (link) => `<a class="contact-link" href="${esc(link.href)}" ${link.href.startsWith("http") ? 'target="_blank" rel="noopener noreferrer"' : ""}>
+      (link, index) => `<a class="contact-link" style="--i:${index}" href="${esc(link.href)}" ${link.href.startsWith("http") ? 'target="_blank" rel="noopener noreferrer"' : ""}>
         <span>${esc(link.label)}</span>
         <strong>${esc(link.value)}</strong>
       </a>`,
@@ -817,6 +820,7 @@ nav?.addEventListener("click", (event) => {
 const header = document.querySelector(".site-header");
 const progress = document.querySelector<HTMLElement>(".scroll-progress");
 const heroImg = document.querySelector<HTMLImageElement>(".hero-figure img");
+const aboutFig = document.querySelector<HTMLElement>(".about-figure");
 const navAnchors = [...document.querySelectorAll<HTMLAnchorElement>(".nav-links a")];
 
 function splitHeading(el: HTMLElement): void {
@@ -850,6 +854,12 @@ function paintScroll(): void {
     const shift = Math.min(y, 720) * 0.08;
     heroImg.style.transform = `translate3d(0, ${shift.toFixed(2)}px, 0) scale(1.06)`;
   }
+  if (aboutFig?.dataset.parallax === "1") {
+    const rect = aboutFig.getBoundingClientRect();
+    const mid = rect.top + rect.height / 2 - window.innerHeight / 2;
+    const shift = Math.max(-16, Math.min(16, -mid * 0.035));
+    aboutFig.style.transform = `translate3d(0, ${shift.toFixed(2)}px, 0)`;
+  }
   const mark = y + 96;
   let current = navAnchors[0];
   for (const link of navAnchors) {
@@ -874,7 +884,7 @@ function animateCount(el: HTMLElement): void {
   const decimals = Number(el.dataset.decimals ?? "0");
   if (!Number.isFinite(target)) return;
   const start = performance.now();
-  const duration = 900;
+  const duration = 1100;
   const tick = (now: number) => {
     const progress = Math.min(1, (now - start) / duration);
     const eased = 1 - (1 - progress) ** 3;
@@ -898,6 +908,7 @@ if (reduceMotion) {
   window.setTimeout(() => intro?.remove(), 1600);
   if (finePointer && window.matchMedia("(min-width: 900px)").matches && heroImg) {
     heroImg.dataset.parallax = "1";
+    if (aboutFig) aboutFig.dataset.parallax = "1";
   }
   const observer = new IntersectionObserver(
     (entries) => {
@@ -911,6 +922,30 @@ if (reduceMotion) {
     { threshold: 0.08 },
   );
   document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+}
+
+if (finePointer && !reduceMotion && window.matchMedia("(min-width: 900px)").matches) {
+  const dot = document.createElement("div");
+  dot.className = "cursor-dot";
+  dot.setAttribute("aria-hidden", "true");
+  document.body.appendChild(dot);
+  const hotSelector = "a, button, .card, .stat, .lifetime-card, .account-card, .reel-copy, .filter-btn";
+  document.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType !== "mouse") return;
+      dot.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+      const target = event.target;
+      const hot =
+        target instanceof Element &&
+        Boolean(target.closest(hotSelector)) &&
+        !target.closest("iframe, .collab-embed");
+      dot.classList.toggle("is-hot", hot);
+      dot.classList.add("is-on");
+    },
+    { passive: true },
+  );
+  document.addEventListener("pointerleave", () => dot.classList.remove("is-on"));
 }
 
 if (finePointer && !reduceMotion) {
