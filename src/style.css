@@ -164,13 +164,29 @@ body.lock .edge-mark { display: none; }
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -0.28rem;
-  height: 1px;
+  bottom: -0.32rem;
+  height: 2px;
   background: var(--sage-deep);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
+
+.nav-links a::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.62rem;
+  width: 0.32rem;
+  height: 0.32rem;
+  border-radius: 50%;
+  background: var(--peach-deep);
+  transform: translateX(-50%) scale(0);
+  transition: transform 0.3s ease;
+}
+
+.nav-links a:hover::before,
+.nav-links a.is-current::before { transform: translateX(-50%) scale(1); }
 
 .nav-links a:hover,
 .nav-links a.is-current { color: var(--ink); }
@@ -423,9 +439,18 @@ html.is-ready .hero .char,
 }
 
 .sec-no {
+  display: inline-block;
   font-family: var(--display);
-  font-size: 1.55rem;
+  font-size: 1.7rem;
   line-height: 1;
+  opacity: 0;
+  transform: translate3d(-0.45em, 0.2em, 0);
+}
+
+.reveal.in .sec-no {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.55s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .sec-en {
@@ -439,6 +464,15 @@ h2 {
   line-height: 1.2;
 }
 
+.sec-head h2 {
+  clip-path: inset(0 0 100% 0);
+}
+
+.reveal.in .sec-head h2 {
+  clip-path: inset(0);
+  transition: clip-path 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.08s;
+}
+
 .lede {
   margin-top: 0.8rem;
   color: var(--muted);
@@ -450,9 +484,18 @@ h2 {
   grid-template-columns: 1.05fr 1.45fr;
   gap: clamp(1.2rem, 3vw, 2.8rem);
   margin-top: 0;
-  padding: 1.35rem 0 1.5rem;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+}
+
+.lifetime-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 13.5rem;
+  padding: 1.6rem 1rem;
 }
 
 .lifetime-label {
@@ -470,6 +513,7 @@ h2 {
 .lifetime-value {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 0.15rem;
   margin-top: 0.35rem;
 }
@@ -697,9 +741,22 @@ h2 {
 }
 
 .account-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: center;
   padding: 1.15rem 0 1.2rem;
   border-bottom: 1px solid var(--line);
   min-width: 0;
+}
+
+.account-avatar {
+  width: 4.75rem;
+  height: 4.75rem;
+  border-radius: 50%;
+  object-fit: cover;
+  grid-row: 1 / span 4;
+  background: var(--bg-deep);
 }
 
 .account-platform {
@@ -971,10 +1028,67 @@ h2 {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .reveal.in .works-grid .card:hover { transform: translateY(-6px); }
-  .card:hover img { transform: scale(1.04); }
+  .reveal.in .works-grid .card:hover { transform: translateY(-8px); }
+  .card-media { transition: box-shadow 0.35s ease; }
+  .card:hover .card-media { box-shadow: 0 18px 34px rgba(36, 31, 26, 0.12); }
+  .card:hover img { transform: scale(1.06); }
+  .card-copy h3 {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 1px;
+    transition: background-size 0.35s ease;
+  }
+  .card:hover .card-copy h3 { background-size: 100% 1px; }
   .card-media:hover .follow-play { opacity: 1; }
   .card-media:hover .play-btn { opacity: 0; }
+
+  .reveal.in .reel-item:hover { transform: translateY(-8px); }
+  .reel-poster { transition: transform 0.4s ease; }
+  .reel-item:hover .reel-poster { transform: scale(1.05); }
+  .reel-item:hover .reel-zh { color: var(--sage-deep); }
+
+  .reveal.in .stat {
+    transition: opacity 0.6s ease, transform 0.35s ease, background-color 0.35s ease;
+  }
+  .reveal.in .stat:hover {
+    transform: translateY(-4px);
+    background-color: rgba(255, 255, 255, 0.55);
+    transition-delay: 0s;
+  }
+  .reveal.in .lifetime-card:hover {
+    transform: translateY(-4px);
+    background-color: rgba(255, 255, 255, 0.45);
+    transition-delay: 0s;
+  }
+
+  .reveal.in .account-card:hover { transform: translateY(-4px); }
+  .account-avatar { transition: transform 0.35s ease, box-shadow 0.35s ease; }
+  .account-card:hover .account-avatar {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--sage);
+  }
+
+  .reveal.in .collab-card:hover { transform: translateY(-4px); }
+
+  .play-btn svg,
+  .text-btn::after,
+  .account-link::after,
+  .collab-link::after,
+  .contact-link strong {
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  .text-btn::after,
+  .account-link::after,
+  .collab-link::after {
+    content: " →";
+    display: inline-block;
+  }
+  .play-btn:hover svg,
+  .text-btn:hover::after,
+  .account-link:hover::after,
+  .collab-link:hover::after { transform: translateX(3px); }
+  .filter-btn:hover { color: var(--ink); }
 }
 
 .about-figure { overflow: hidden; }
@@ -1437,6 +1551,47 @@ dialog.lightbox[open]::backdrop { animation: lb-bg 0.4s ease; }
 
 .player-fallback a { color: var(--peach); }
 
+.lifetime-card,
+.account-card,
+.contact-link {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.reveal.in .lifetime-card,
+.reveal.in .account-card,
+.reveal.in .contact-link {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s ease, transform 0.75s ease, background-color 0.35s ease;
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--peach-deep);
+  pointer-events: none;
+  opacity: 0;
+  transition: width 0.28s ease, height 0.28s ease, margin 0.28s ease, opacity 0.28s ease, background-color 0.28s ease, border-color 0.28s ease;
+}
+
+.cursor-dot.is-on { opacity: 0.9; }
+
+.cursor-dot.is-hot {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  background: transparent;
+  border: 1px solid var(--sage-deep);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -1605,6 +1760,12 @@ dialog.lightbox[open]::backdrop { animation: lb-bg 0.4s ease; }
   .reel-item,
   .reel-stage,
   .collab-card,
+  .lifetime-card,
+  .account-card,
+  .contact-link,
+  .sec-no,
+  .sec-head h2,
+  .cursor-dot,
   .works-grid .card,
   .card-media img,
   dialog.lightbox,
