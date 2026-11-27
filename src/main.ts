@@ -1,9 +1,11 @@
 import {
   about,
+  accounts,
   collabs,
   contact,
   highlights,
   impressionSeries,
+  lifetime,
   markets,
   reel,
   site,
@@ -364,6 +366,29 @@ function collabsHtml(): string {
   </section>`;
 }
 
+function accountsHtml(): string {
+  const cards = accounts.items
+    .map(
+      (item, index) => `<article class="account-card" style="--i:${index}">
+        <p class="account-platform">${esc(item.platform)}</p>
+        <h3>${esc(item.handle)}</h3>
+        ${item.name ? `<p class="account-name">${esc(item.name)}</p>` : ""}
+        <a class="account-link" href="${esc(item.href)}" target="_blank" rel="noopener noreferrer">查看账号 / アカウントを見る</a>
+      </article>`,
+    )
+    .join("");
+  return `<section class="section accounts reveal" id="accounts" aria-label="运营过的社媒账号">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Accounts</span></div>
+        <h2>${esc(accounts.title)}</h2>
+        <p class="account-sub" lang="ja">${esc(accounts.titleJa)}</p>
+      </div>
+      <div class="account-grid">${cards}</div>
+    </div>
+  </section>`;
+}
+
 function mountInstagramEmbeds(): void {
   if (!document.querySelector(".instagram-media")) return;
   const process = () => {
@@ -385,6 +410,16 @@ function mountInstagramEmbeds(): void {
 }
 
 function pageHtml(): string {
+  const lifetimeHtml = lifetime
+    .map(
+      (item, index) => `<article class="lifetime-card${item.prefix ? " is-sales" : ""}" style="--i:${index}">
+        <p class="lifetime-label">${esc(item.label)} <span lang="ja">/ ${esc(item.labelJa)}</span></p>
+        <p class="lifetime-value">${item.prefix ? `<span class="yen">${esc(item.prefix)}</span>` : ""}<span class="num" data-count="${item.value}" data-decimals="0">${esc(item.text)}</span>${item.unit ? `<span class="unit">${esc(item.unit)}</span>` : ""}</p>
+        <p class="lifetime-note">含所有任职公司 / 全在籍企業の合計</p>
+      </article>`,
+    )
+    .join("");
+
   const stats = highlights
     .map(
       (item, index) => `<article class="stat" style="--i:${index}">
@@ -435,6 +470,7 @@ function pageHtml(): string {
       <a href="#figures">数据</a>
       <a href="#works">作品</a>
       ${collabs.items.length ? `<a href="#collabs">合作</a>` : ""}
+      <a href="#accounts">账号</a>
       <a href="#about">关于</a>
       <a href="#contact">联络</a>
     </nav>
@@ -467,9 +503,10 @@ function pageHtml(): string {
         <div class="sec-head">
           <div class="sec-label"><span class="sec-no">03</span><span class="sec-en" lang="en">Figures</span></div>
           <h2>这一季的数字</h2>
-          <p class="lede">合作达人、播放、互动、市场和战役。下面的数字与图表都是示例，改数据文件就会一起变。</p>
+          <p class="lede">合作达人、播放、互动、市场和交付视频。下面的数字与图表都是示例，改数据文件就会一起变。</p>
         </div>
         <div class="stat-grid">${stats}</div>
+        <div class="lifetime">${lifetimeHtml}</div>
         <div class="chart-layout">
           ${seriesHtml()}
           ${marketsHtml()}
@@ -495,10 +532,12 @@ function pageHtml(): string {
 
     ${collabsHtml()}
 
+    ${accountsHtml()}
+
     <section class="section about reveal" id="about">
       <div class="wrap about-grid">
         <div>
-          <div class="sec-label"><span class="sec-no">06</span><span class="sec-en" lang="en">Profile</span></div>
+          <div class="sec-label"><span class="sec-no">07</span><span class="sec-en" lang="en">Profile</span></div>
           <blockquote>${esc(about.quote)}</blockquote>
           <figure class="about-figure">
             <img src="${esc(about.image)}" alt="${esc(about.imageAlt)}" data-seed="about" loading="lazy" decoding="async">
@@ -515,7 +554,7 @@ function pageHtml(): string {
 
     <section class="section contact reveal" id="contact">
       <div class="wrap">
-        <div class="sec-label"><span class="sec-no">${collabs.items.length ? "07" : "06"}</span><span class="sec-en" lang="en">Contact</span></div>
+        <div class="sec-label"><span class="sec-no">08</span><span class="sec-en" lang="en">Contact</span></div>
         <h2>${esc(contact.title)}</h2>
         <div class="contact-list">${links}</div>
       </div>
