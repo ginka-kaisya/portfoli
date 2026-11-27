@@ -103,27 +103,51 @@ export const hero = {
   alt: "示例封面：京都清晨的街巷，并非项目成片",
 };
 
+/**
+ * 跨所有任职公司的累计。销售额中的 6,722.4 美元按
+ * ExchangeRate-API（https://open.er-api.com/v6/latest/USD）
+ * 2026-11-27 00:02 UTC 的 1 USD = 159.277231 JPY 折算，
+ * 四舍五入为 1,070,725 日元。
+ * 100,680,040 + 17,513,842 + 1,070,725 = 119,264,607
+ */
+export const lifetime = [
+  {
+    label: "历史出单",
+    labelJa: "累計受注数",
+    value: 2111,
+    text: "2,111",
+    unit: "单",
+  },
+  {
+    label: "历史销售额",
+    labelJa: "累計売上",
+    value: 119264607,
+    text: "119,264,607",
+    prefix: "¥",
+  },
+];
+
 /** 首页数据看板。数字都是示例，直接改 value。 */
 export const highlights: Highlight[] = [
-  { label: "合作达人", value: 128, decimals: 0, unit: "位", hint: "本年度合作" },
-  { label: "累计播放", value: 2460, decimals: 0, unit: "万", hint: "跨平台合计" },
+  { label: "合作达人", value: 91, decimals: 0, unit: "位", hint: "本年度合作" },
+  { label: "累计播放", value: 90, decimals: 0, unit: "万", hint: "跨平台合计" },
   { label: "平均互动率", value: 4.8, decimals: 1, unit: "%", hint: "互动 ÷ 播放" },
   { label: "覆盖市场", value: 12, decimals: 0, unit: "个", hint: "国家与地区" },
-  { label: "品牌战役", value: 36, decimals: 0, unit: "场", hint: "已结案战役" },
+  { label: "交付视频 / 納品動画", value: 111, decimals: 0, unit: "条", hint: "已交付" },
 ];
 
 /** 柱状图。value 的单位写在 unit 里，页面会按最大值自动缩放。 */
 export const impressionSeries = {
   title: "近六月播放",
-  note: "单位：万次 · 示例数据",
+  note: "单位：万次 · 六个月合计 90万",
   unit: "万",
   points: [
-    { label: "6月", value: 280 },
-    { label: "7月", value: 340 },
-    { label: "8月", value: 310 },
-    { label: "9月", value: 460 },
-    { label: "10月", value: 520 },
-    { label: "11月", value: 610 },
+    { label: "6月", value: 10 },
+    { label: "7月", value: 12 },
+    { label: "8月", value: 11 },
+    { label: "9月", value: 16 },
+    { label: "10月", value: 19 },
+    { label: "11月", value: 22 },
   ],
 };
 
@@ -373,12 +397,34 @@ export const collabs = {
   ] satisfies CollabReel[],
 };
 
+export type RunAccount = {
+  platform: string;
+  handle: string;
+  /** 公开页上的显示名。读不到就不写。 */
+  name?: string;
+  href: string;
+};
+
+export const accounts = {
+  title: "运营过的社媒账号",
+  titleJa: "運営した SNS アカウント",
+  items: [
+    {
+      platform: "Instagram",
+      handle: "@innaiojp",
+      name: "INNAIO日本公式",
+      href: "https://www.instagram.com/innaiojp/",
+    },
+    {
+      platform: "X",
+      handle: "@UnifyDrive_jp",
+      name: "UnifyDrive Japan｜ポータブルNAS『UT2』",
+      href: "https://x.com/unifydrive_jp",
+    },
+  ] satisfies RunAccount[],
+};
+
 export const contact = {
   title: "想合作，或只是打个招呼。",
-  links: [
-    { label: "Email", value: "2597743668@qq.com", href: "mailto:2597743668@qq.com" },
-    { label: "Instagram", value: "@tanaka.example", href: "https://instagram.com/" },
-    { label: "小红书", value: "田中（示例）", href: "https://www.xiaohongshu.com/" },
-    { label: "LinkedIn", value: "Tanaka", href: "https://www.linkedin.com/" },
-  ],
+  links: [{ label: "Email", value: "2597743668@qq.com", href: "mailto:2597743668@qq.com" }],
 };

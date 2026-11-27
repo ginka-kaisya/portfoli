@@ -445,11 +445,67 @@ h2 {
   max-width: 38rem;
 }
 
+.lifetime {
+  display: grid;
+  grid-template-columns: 1.05fr 1.45fr;
+  gap: clamp(1.2rem, 3vw, 2.8rem);
+  margin-top: 0;
+  padding: 1.35rem 0 1.5rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.lifetime-label {
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  line-height: 1.35;
+}
+
+.lifetime-label span {
+  color: var(--muted);
+  font-size: 0.72em;
+  letter-spacing: 0.04em;
+}
+
+.lifetime-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.15rem;
+  margin-top: 0.35rem;
+}
+
+.lifetime-value .num,
+.lifetime-value .yen {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(4.2rem, 7vw, 6.4rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+}
+
+.lifetime-card.is-sales .num,
+.lifetime-card.is-sales .yen {
+  font-size: clamp(2.7rem, 4.4vw, 4.15rem);
+  letter-spacing: -0.035em;
+}
+
+.lifetime-value .unit {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.lifetime-note {
+  margin-top: 0.45rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   border-top: 1px solid var(--line);
-  margin-top: 1.5rem;
+  margin-top: 1.6rem;
 }
 
 .stat {
@@ -624,13 +680,58 @@ h2 {
   font-family: "Noto Serif JP", "Yu Mincho", "Noto Serif SC", serif;
 }
 
-.collab-sub {
+.collab-sub,
+.account-sub {
   margin-top: 0.35rem;
   font-family: "Noto Serif JP", "Yu Mincho", "Noto Serif SC", serif;
   font-size: 1.2rem;
   letter-spacing: 0.14em;
   color: var(--muted);
 }
+
+.account-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0  clamp(1.5rem, 4vw, 3rem);
+  border-top: 1px solid var(--line);
+}
+
+.account-card {
+  padding: 1.15rem 0 1.2rem;
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+
+.account-platform {
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  font-size: 0.82rem;
+}
+
+.account-card h3 {
+  margin-top: 0.35rem;
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.account-name {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.account-link {
+  display: inline-block;
+  margin-top: 0.85rem;
+  color: var(--sage-deep);
+  text-decoration: none;
+  border-bottom: 1px solid var(--sage-deep);
+  line-height: 1.4;
+}
+
+.account-link:hover { color: var(--ink); }
 
 .collab-note {
   margin-top: 0.85rem;
@@ -1427,7 +1528,9 @@ dialog.lightbox[open]::backdrop { animation: lb-bg 0.4s ease; }
 
   .facts { grid-template-columns: 1fr; }
 
-  .collab-grid { grid-template-columns: 1fr; }
+  .collab-grid,
+  .account-grid,
+  .lifetime { grid-template-columns: 1fr; }
 
   .contact-link { flex-direction: column; gap: 0.15rem; }
 
